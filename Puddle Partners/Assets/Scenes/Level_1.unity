@@ -974,9 +974,33 @@ PrefabInstance:
       propertyPath: runSpeed
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 2177175345972750010, guid: 8bce3b7a638025c4d998feb7a91315ab, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3639652433383005923, guid: 8bce3b7a638025c4d998feb7a91315ab, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4475845227157495231, guid: 8bce3b7a638025c4d998feb7a91315ab, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.1675
+      objectReference: {fileID: 0}
+    - target: {fileID: 4578528764492062918, guid: 8bce3b7a638025c4d998feb7a91315ab, type: 3}
+      propertyPath: noFriction
+      value: 
+      objectReference: {fileID: 6200000, guid: 06479737b79dbf7408f25b9ef021f8bd, type: 2}
     - target: {fileID: 4578528764492062918, guid: 8bce3b7a638025c4d998feb7a91315ab, type: 3}
       propertyPath: m_JumpForce
       value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: 4578528764492062918, guid: 8bce3b7a638025c4d998feb7a91315ab, type: 3}
+      propertyPath: fullFriction
+      value: 
+      objectReference: {fileID: 6200000, guid: d253c06f268a7b546ba4e1c6ad683054, type: 2}
+    - target: {fileID: 4578528764492062918, guid: 8bce3b7a638025c4d998feb7a91315ab, type: 3}
+      propertyPath: slopeCheckDistance
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7604257101170976678, guid: 8bce3b7a638025c4d998feb7a91315ab, type: 3}
       propertyPath: m_Name
