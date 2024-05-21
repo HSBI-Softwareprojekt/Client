@@ -119,6 +119,7 @@
 -define:COM_UNITY_MODULES_ANIMATION
 -define:COM_UNITY_MODULES_PHYSICS
 -define:COM_UNITY_MODULES_PHYSICS2D
+-define:RELAY_SDK_INSTALLED
 -define:CSHARP_7_OR_LATER
 -define:CSHARP_7_3_OR_NEWER
 -define:UNITY_EDITOR_ONLY_COMPILATION
@@ -348,6 +349,9 @@
 -r:"Library/Bee/artifacts/1900b0aE.dag/Unity.Netcode.Components.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/Unity.Netcode.Runtime.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/Unity.Networking.Transport.ref.dll"
+-r:"Library/Bee/artifacts/1900b0aE.dag/Unity.Services.Authentication.ref.dll"
+-r:"Library/Bee/artifacts/1900b0aE.dag/Unity.Services.Core.ref.dll"
+-r:"Library/Bee/artifacts/1900b0aE.dag/Unity.Services.Relay.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEditor.TestRunner.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEditor.UI.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEngine.TestRunner.ref.dll"

@@ -1,0 +1,83 @@
+// This file is generated. Do not modify by hand.
+// XML documentation file not found. To check if public methods have XML comments,
+// make sure the XML doc file is present and located next to the scraped dll
+namespace Unity.Services.Core
+{
+    public static class UnityServicesExtensions
+    {
+        public static Unity.Services.Qos.IQosService GetQosService(this IUnityServices unityServices);
+    }
+}
+
+namespace Unity.Services.Qos
+{
+    public interface IQosAnnotatedResult : IQosResult
+    {
+        public System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> Annotations { get; }
+    }
+
+    public interface IQosMeasurements
+    {
+        public int AverageLatencyMs { get; }
+        public float PacketLossPercent { get; }
+    }
+
+    public interface IQosResult
+    {
+        public int AverageLatencyMs { get; }
+        public float PacketLossPercent { get; }
+        public string Region { get; }
+    }
+
+    public interface IQosService
+    {
+        public System.Threading.Tasks.Task<System.Collections.Generic.IList<V2.Models.QosServer>> GetAllServersAsync();
+        public System.Threading.Tasks.Task<System.Collections.Generic.IList<System.ValueTuple<V2.Models.QosServer, IQosMeasurements>>> GetQosResultsAsync(System.Collections.Generic.IList<V2.Models.QosServer> servers);
+        public System.Threading.Tasks.Task<System.Collections.Generic.IList<IQosAnnotatedResult>> GetSortedMultiplayQosResultsAsync(System.Collections.Generic.IList<string> fleet);
+        public System.Threading.Tasks.Task<System.Collections.Generic.IList<IQosResult>> GetSortedQosResultsAsync(string service, System.Collections.Generic.IList<string> regions);
+        public System.Threading.Tasks.Task<System.Collections.Generic.IList<IQosAnnotatedResult>> GetSortedRelayQosResultsAsync(System.Collections.Generic.IList<string> regions);
+    }
+
+    public interface IQosServiceComponent : Unity.Services.Core.Internal.IServiceComponent
+    {
+        public IQosService Service { get; }
+    }
+
+    public static class QosService
+    {
+        public static IQosService Instance { get; }
+    }
+}
+
+namespace Unity.Services.Qos.Runner
+{
+    public struct QosAnnotatedResult
+    {
+        public System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> Annotations;
+        public int AverageLatencyMs;
+        public float PacketLossPercent;
+        public string Region;
+    }
+}
+
+namespace Unity.Services.Qos.V2.Models
+{
+    [System.Runtime.Serialization.DataContract(Name = @"QosServer")] [UnityEngine.Scripting.Preserve] public class QosServer
+    {
+        [System.Runtime.Serialization.DataMember(EmitDefaultValue = true, IsRequired = true, Name = @"annotations")] [UnityEngine.Scripting.Preserve] public QosServerAnnotations Annotations { get; }
+        [System.Runtime.Serialization.DataMember(EmitDefaultValue = true, IsRequired = true, Name = @"endpoints")] [UnityEngine.Scripting.Preserve] public System.Collections.Generic.List<string> Endpoints { get; }
+        [UnityEngine.Scripting.Preserve] public QosServer(System.Collections.Generic.List<string> endpoints, QosServerAnnotations annotations) {}
+    }
+
+    [System.Runtime.Serialization.DataContract(Name = @"QosServerAnnotations")] [UnityEngine.Scripting.Preserve] public class QosServerAnnotations
+    {
+        [System.Runtime.Serialization.DataMember(EmitDefaultValue = false, Name = @"environmentId")] [UnityEngine.Scripting.Preserve] public System.Collections.Generic.List<string> EnvironmentId { get; }
+        [System.Runtime.Serialization.DataMember(EmitDefaultValue = false, Name = @"matchmakerPoolId")] [UnityEngine.Scripting.Preserve] public System.Collections.Generic.List<string> MatchmakerPoolId { get; }
+        [System.Runtime.Serialization.DataMember(EmitDefaultValue = false, Name = @"matchmakerQueueName")] [UnityEngine.Scripting.Preserve] public System.Collections.Generic.List<string> MatchmakerQueueName { get; }
+        [System.Runtime.Serialization.DataMember(EmitDefaultValue = false, Name = @"multiplayFleetId")] [UnityEngine.Scripting.Preserve] public System.Collections.Generic.List<string> MultiplayFleetId { get; }
+        [System.Runtime.Serialization.DataMember(EmitDefaultValue = false, Name = @"multiplayRegionId")] [UnityEngine.Scripting.Preserve] public System.Collections.Generic.List<string> MultiplayRegionId { get; }
+        [System.Runtime.Serialization.DataMember(EmitDefaultValue = false, Name = @"projectId")] [UnityEngine.Scripting.Preserve] public System.Collections.Generic.List<string> ProjectId { get; }
+        [System.Runtime.Serialization.DataMember(EmitDefaultValue = false, Name = @"relayRegionId")] [UnityEngine.Scripting.Preserve] public System.Collections.Generic.List<string> RelayRegionId { get; }
+        [UnityEngine.Scripting.Preserve] public QosServerAnnotations(System.Collections.Generic.List<string> projectId = default(System.Collections.Generic.List<string>), System.Collections.Generic.List<string> environmentId = default(System.Collections.Generic.List<string>), System.Collections.Generic.List<string> relayRegionId = default(System.Collections.Generic.List<string>), System.Collections.Generic.List<string> multiplayRegionId = default(System.Collections.Generic.List<string>), System.Collections.Generic.List<string> multiplayFleetId = default(System.Collections.Generic.List<string>), System.Collections.Generic.List<string> matchmakerQueueName = default(System.Collections.Generic.List<string>), System.Collections.Generic.List<string> matchmakerPoolId = default(System.Collections.Generic.List<string>)) {}
+    }
+}
