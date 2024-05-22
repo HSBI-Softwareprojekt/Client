@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using Cinemachine;
 
 public class PlayerMovement : NetworkBehaviour
 {
     public CharacterController2D controller;
-
+    [SerializeField] private CinemachineVirtualCamera virtualCamera;
+    [SerializeField] private AudioListener listener;
     public float runSpeed = 20f;
     float horizontalMove = 0f;
     bool jump = false;
@@ -31,5 +33,18 @@ public class PlayerMovement : NetworkBehaviour
     {
         controller.Move(horizontalMove * Time.fixedDeltaTime, false, jump);
         jump = false;
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        if (IsOwner)
+        {
+            listener.enabled = true;
+            virtualCamera.Priority = 1;
+        }
+        else
+        {
+            virtualCamera.Priority = 0;
+        }
     }
 }
