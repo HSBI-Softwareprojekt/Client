@@ -56,7 +56,7 @@ public class login : MonoBehaviour
     private void LoginSuccessfull(int id)
     {
         PlayerPrefs.SetString("LoginID", id.ToString());
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        
     }
 
     public void RequestLogin()
