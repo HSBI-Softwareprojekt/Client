@@ -18,6 +18,8 @@ public class login : MonoBehaviour
     public TMP_InputField password;
     public GameObject errorPanel;
     public TMP_Text errorMsg;
+    public GameObject loginScreen;
+    public GameObject menuScreen;
 
     private string HttpServer()
     {
@@ -56,6 +58,8 @@ public class login : MonoBehaviour
     private void LoginSuccessfull(int id)
     {
         PlayerPrefs.SetString("LoginID", id.ToString());
+        loginScreen.SetActive(false);
+        menuScreen.SetActive(true);
         
     }
 

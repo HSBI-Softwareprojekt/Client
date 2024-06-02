@@ -35,8 +35,7 @@ public class Relay : MonoBehaviour
             RelayServerData relayServerData = new RelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
             NetworkManager.Singleton.StartHost();
-            NetworkManager.Singleton.SceneManager.LoadScene("Level_1",LoadSceneMode.Single);
-            
+
 
         }
         catch (RelayServiceException ex)
