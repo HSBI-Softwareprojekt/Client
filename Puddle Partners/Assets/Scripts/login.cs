@@ -10,6 +10,7 @@ using System.Net;
 using System;
 using System.Text;
 using UnityEngine.UI;
+using Newtonsoft.Json;
 
 public class login : MonoBehaviour
 {
@@ -18,8 +19,50 @@ public class login : MonoBehaviour
     public TMP_InputField password;
     public GameObject errorPanel;
     public TMP_Text errorMsg;
-    public GameObject loginScreen;
-    public GameObject menuScreen;
+
+    public static class JsonHelper
+    {
+        public static T[] FromJson<T>(string json)
+        {
+            Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
+            return wrapper.Items;
+        }
+
+        public static string ToJson<T>(T[] array)
+        {
+            Wrapper<T> wrapper = new Wrapper<T>();
+            wrapper.Items = array;
+            return JsonUtility.ToJson(wrapper);
+        }
+
+        public static string ToJson<T>(T[] array, bool prettyPrint)
+        {
+            Wrapper<T> wrapper = new Wrapper<T>();
+            wrapper.Items = array;
+            return JsonUtility.ToJson(wrapper, prettyPrint);
+        }
+
+        [Serializable]
+        private class Wrapper<T>
+        {
+            public T[] Items;
+        }
+    }
+
+    [System.Serializable]
+    public class Data
+    {
+        public int id;
+
+        public int getId() { return id; }
+    }
+
+    [System.Serializable]
+    public class Error
+    {
+        public ArrayList error;
+        public ArrayList getError() { return error; }
+    }
 
     private string HttpServer()
     {
@@ -30,18 +73,10 @@ public class login : MonoBehaviour
         return url;
     }
 
-    private ArrayList HttpParser(string text)
-    {
-        string sep = "<!=!>";
-        string[] sp = text.Split(sep, StringSplitOptions.None);
-        ArrayList data = new ArrayList(sp);
-        return data;
-    }
-
     private void ErrorMsg(ArrayList msg)
     {
         string showMsg = "";
-        for (int i = 1; i < msg.Count; i++)
+        for (int i = 0; i < msg.Count; i++)
         {
             showMsg += msg[i] + "\n\n";
         }
@@ -58,14 +93,12 @@ public class login : MonoBehaviour
     private void LoginSuccessfull(int id)
     {
         PlayerPrefs.SetString("LoginID", id.ToString());
-        loginScreen.SetActive(false);
-        menuScreen.SetActive(true);
-        
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     public void RequestLogin()
     {
-        WebRequest request = WebRequest.Create("http://"+ HttpServer() + "/puddle_partners/login.php");
+        WebRequest request = WebRequest.Create("http://" + HttpServer() + "/puddle_partners/login.php");
         ASCIIEncoding encoding = new ASCIIEncoding();
         string postData = "USERNAME=" + username.text + "&PASSWORD=" + password.text;
         byte[] data = encoding.GetBytes(postData);
@@ -81,27 +114,24 @@ public class login : MonoBehaviour
         string responseText = reader.ReadToEnd();
         reader.Close();
         stream.Close();
-        ArrayList responseData = HttpParser(responseText);
-        if (responseData[0].ToString() == "ERROR")
+        try
         {
-            ErrorMsg(responseData);
-        } else if (responseData[0].ToString() == "DATA")
-        {
-            int id;
-            if (Int32.TryParse(responseData[1].ToString(), out id))
+            Data playerData = JsonConvert.DeserializeObject<Data>(responseText);
+            if (playerData.getId() != 0)
             {
-                LoginSuccessfull(id);
-            } else
-            {
-                ArrayList errorData = new ArrayList();
-                errorData.Add("ID konnte nicht konvertiert werden");
-                ErrorMsg(errorData);
+                LoginSuccessfull(playerData.getId());
             }
-        } else
+            else
+            {
+                Error error = JsonConvert.DeserializeObject<Error>(responseText);
+                ErrorMsg(error.getError());
+            }
+        }
+        catch (Exception)
         {
-            ArrayList errorData = new ArrayList();
-            errorData.Add("Server Rückgabe Fehler");
-            ErrorMsg(errorData);
+            ArrayList err = new ArrayList();
+            err.Add("Kein gültiges Rückgabeformat vom Webserver");
+            ErrorMsg(err);
         }
     }
 
@@ -130,7 +160,6 @@ public class login : MonoBehaviour
         else
         {
             var response = uwr.downloadHandler.text;
-            Debug.Log(response);
         }
     }*/
 

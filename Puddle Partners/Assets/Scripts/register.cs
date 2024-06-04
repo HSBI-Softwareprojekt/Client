@@ -7,6 +7,7 @@ using System.Text;
 using UnityEngine.UI;
 using System.Net;
 using System;
+using Newtonsoft.Json;
 
 public class register : MonoBehaviour
 {
@@ -20,6 +21,50 @@ public class register : MonoBehaviour
     public GameObject loginScreen;
     public GameObject registerScreen;
 
+    public static class JsonHelper
+    {
+        public static T[] FromJson<T>(string json)
+        {
+            Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
+            return wrapper.Items;
+        }
+
+        public static string ToJson<T>(T[] array)
+        {
+            Wrapper<T> wrapper = new Wrapper<T>();
+            wrapper.Items = array;
+            return JsonUtility.ToJson(wrapper);
+        }
+
+        public static string ToJson<T>(T[] array, bool prettyPrint)
+        {
+            Wrapper<T> wrapper = new Wrapper<T>();
+            wrapper.Items = array;
+            return JsonUtility.ToJson(wrapper, prettyPrint);
+        }
+
+        [Serializable]
+        private class Wrapper<T>
+        {
+            public T[] Items;
+        }
+    }
+
+    [System.Serializable]
+    public class Data
+    {
+        public int ok;
+
+        public int getOk() { return ok; }
+    }
+
+    [System.Serializable]
+    public class Error
+    {
+        public ArrayList error;
+        public ArrayList getError() { return error; }
+    }
+
     private string HttpServer()
     {
         string url = "";
@@ -29,18 +74,10 @@ public class register : MonoBehaviour
         return url;
     }
 
-    private ArrayList HttpParser(string text)
-    {
-        string sep = "<!=!>";
-        string[] sp = text.Split(sep, StringSplitOptions.None);
-        ArrayList data = new ArrayList(sp);
-        return data;
-    }
-
     private void ErrorMsg(ArrayList msg)
     {
         string showMsg = "";
-        for (int i = 1; i < msg.Count; i++)
+        for (int i = 0; i < msg.Count; i++)
         {
             showMsg += msg[i] + "\n\n";
         }
@@ -78,29 +115,24 @@ public class register : MonoBehaviour
         string responseText = reader.ReadToEnd();
         reader.Close();
         stream.Close();
-        ArrayList responseData = HttpParser(responseText);
-        if (responseData[0].ToString() == "ERROR")
+        try
         {
-            ErrorMsg(responseData);
-        }
-        else if (responseData[0].ToString() == "DATA")
-        {
-            if (responseData[1].ToString() == "TRUE")
+            Data ok = JsonConvert.DeserializeObject<Data>(responseText);
+            if (ok.getOk() != 0)
             {
                 RegisterSuccessfull();
             }
             else
             {
-                ArrayList errorData = new ArrayList();
-                errorData.Add("Registrierung konnte nicht abgeschlossen werden");
-                ErrorMsg(errorData);
+                Error error = JsonConvert.DeserializeObject<Error>(responseText);
+                ErrorMsg(error.getError());
             }
         }
-        else
+        catch (Exception)
         {
-            ArrayList errorData = new ArrayList();
-            errorData.Add("Server Rückgabe Fehler");
-            ErrorMsg(errorData);
+            ArrayList err = new ArrayList();
+            err.Add("Kein gültiges Rückgabeformat vom Webserver");
+            ErrorMsg(err);
         }
     }
 
