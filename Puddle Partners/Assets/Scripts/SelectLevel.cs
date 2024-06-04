@@ -12,13 +12,18 @@ using System.Text;
 using UnityEngine.UI;
 using Newtonsoft.Json;
 
-public class login : MonoBehaviour
+public class SelectLevel : MonoBehaviour
 {
 
-    public TMP_InputField username;
-    public TMP_InputField password;
+    public GameObject forwards;
+    public GameObject backwards;
     public GameObject errorPanel;
+    public GameObject start;
     public TMP_Text errorMsg;
+    public TMP_Text levelText;
+    private int level = 1;
+    private Data playerData;
+    private int max_level = 4;
 
     public static class JsonHelper
     {
@@ -52,9 +57,9 @@ public class login : MonoBehaviour
     [System.Serializable]
     public class Data
     {
-        public int id;
+        public int[] level;
 
-        public int getId() { return id; }
+        public int[] getLevel() { return level; }
     }
 
     [System.Serializable]
@@ -67,7 +72,7 @@ public class login : MonoBehaviour
     private string HttpServer()
     {
         string url = "";
-        StreamReader reader = new StreamReader(Application.dataPath+"/config/server.pudl");
+        StreamReader reader = new StreamReader(Application.dataPath + "/config/server.pudl");
         url = reader.ReadToEnd();
         reader.Close();
         return url;
@@ -90,17 +95,84 @@ public class login : MonoBehaviour
         errorMsg.text = "";
     }
 
-    private void LoginSuccessfull(int id)
+    private void enableButtonOptions()
     {
-        PlayerPrefs.SetString("LoginID", id.ToString());
-        SceneManager.LoadScene(1);
+        start.SetActive(true);
+        forwards.SetActive(true);
     }
 
-    public void RequestLogin()
+    public void switchLevelUp()
     {
-        WebRequest request = WebRequest.Create("http://" + HttpServer() + "/puddle_partners/login.php");
+        level++;
+        bool is_active = false;
+        foreach(int lvl in playerData.getLevel())
+        {
+            if (lvl == (level-1))
+            {
+                is_active = true;
+                break;
+            }
+        }
+        levelText.text = "Level " + level;
+        if(!is_active)
+        {
+            start.SetActive(false);
+        }
+        else
+        {
+            start.SetActive(true);
+        }
+        backwards.SetActive(true);
+        if(level == max_level)
+        {
+            forwards.SetActive(false);
+        }
+    }
+
+    public void switchLevelDown()
+    {
+        level--;
+        bool is_active = false;
+        if (level != 1)
+        {
+            foreach (int lvl in playerData.getLevel())
+            {
+                if (lvl == (level - 1))
+                {
+                    is_active = true;
+                    break;
+                }
+            }
+        } else
+        {
+            is_active = true;
+        }
+        levelText.text = "Level " + level;
+        if (!is_active)
+        {
+            start.SetActive(false);
+        }
+        else
+        {
+            start.SetActive(true);
+        }
+        forwards.SetActive(true);
+        if (level == 1)
+        {
+            backwards.SetActive(false);
+        }
+    }
+
+    public void startLevel()
+    {
+        SceneManager.LoadScene(level + 1);
+    }
+
+    void OnEnable()
+    {
+        WebRequest request = WebRequest.Create("http://" + HttpServer() + "/puddle_partners/get_level.php");
         ASCIIEncoding encoding = new ASCIIEncoding();
-        string postData = "USERNAME=" + username.text + "&PASSWORD=" + password.text;
+        string postData = "ID="+ PlayerPrefs.GetString("LoginID");
         byte[] data = encoding.GetBytes(postData);
         request.Method = "POST";
         request.ContentType = "application/x-www-form-urlencoded";
@@ -116,10 +188,10 @@ public class login : MonoBehaviour
         stream.Close();
         try
         {
-            Data playerData = JsonConvert.DeserializeObject<Data>(responseText);
-            if (playerData.getId() != 0)
+            playerData = JsonConvert.DeserializeObject<Data>(responseText);
+            if (playerData.getLevel().Length != 0)
             {
-                LoginSuccessfull(playerData.getId());
+                enableButtonOptions();
             }
             else
             {
@@ -135,32 +207,6 @@ public class login : MonoBehaviour
         }
     }
 
-    public void QuitGame()
-    {
-        Application.Quit();
-    }
 
-    // Für HTTPS von Unity
-    /*public void RequestLogin()
-    {
-        StartCoroutine(Request());
-    }
-
-    IEnumerator Request()
-    {
-        WWWForm data = new WWWForm();
-        data.AddField("USERNAME", username.text);
-        data.AddField("PASSWORD", password.text);
-        using UnityWebRequest uwr = UnityWebRequest.Post("https://192.168.178.31/puddle_partners/login.php", data);
-        yield return uwr.SendWebRequest();
-        if (uwr.result == UnityWebRequest.Result.ConnectionError)
-        {
-            Debug.Log("Error While Sending: " + uwr.error);
-        }
-        else
-        {
-            var response = uwr.downloadHandler.text;
-        }
-    }*/
 
 }
