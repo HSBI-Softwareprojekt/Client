@@ -60,6 +60,11 @@ public class SelectLevel : MonoBehaviour
         public int[] level;
 
         public int[] getLevel() { return level; }
+
+        public void setDefault()
+        {
+            level[0] = 0;
+        }
     }
 
     [System.Serializable]
@@ -189,8 +194,12 @@ public class SelectLevel : MonoBehaviour
         try
         {
             playerData = JsonConvert.DeserializeObject<Data>(responseText);
-            if (playerData.getLevel().Length != 0)
+            if (playerData.getLevel().Length != 0 && playerData.getLevel()[0] != 0)
             {
+                if(playerData.getLevel().Length == 1 && playerData.getLevel()[0] == -1)
+                {
+                    playerData.setDefault();
+                } 
                 enableButtonOptions();
             }
             else
