@@ -19,6 +19,8 @@ jobs:
                   path: PuddlePartners
                   fetch-depth: 0
                   lfs: false
+            - name: Get directory
+              run: ls PuddlePartners
             - uses: actions/cache@v2
               with:
                   path: Library
