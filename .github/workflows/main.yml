@@ -31,7 +31,7 @@ jobs:
                   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
               with:
                   targetPlatform: ${{ matrix.targetPlatform }}
-                  projectPath: ./PuddlePartners
+                  projectPath: Client/PuddlePartners
             - uses: actions/upload-artifact@v2
               with:
                   name: Build-${{ matrix.targetPlatform }}
