@@ -16,11 +16,11 @@ jobs:
         steps:
             - uses: actions/checkout@v2
               with:
-                  path: ".\Puddle Partners\Assets\"
+                  path: .\Puddle%20Partners\Assets\
                   fetch-depth: 0
                   lfs: false
             - name: Get directory
-              run: ls ".\Puddle Partners\Assets\"
+              run: ls .\Puddle%20Partners\Assets\
             - uses: actions/cache@v2
               with:
                   path: Library
