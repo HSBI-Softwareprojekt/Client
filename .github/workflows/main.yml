@@ -16,7 +16,7 @@ jobs:
         steps:
             - uses: actions/checkout@v2
               with:
-                  path: ..\..\PuddlePartners
+                  path: ../../PuddlePartners
                   fetch-depth: 0
                   lfs: false
             - uses: actions/cache@v2
