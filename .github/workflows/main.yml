@@ -18,7 +18,7 @@ jobs:
               with:
                   path: .\Puddle Partners\Assets\
                   fetch-depth: 0
-                  lfs: true
+                  lfs: false
             - name: Get directory
               run: ls src
             - uses: actions/cache@v2
