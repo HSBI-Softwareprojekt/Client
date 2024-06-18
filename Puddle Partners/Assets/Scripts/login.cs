@@ -15,6 +15,8 @@ using Newtonsoft.Json;
 public class login : MonoBehaviour
 {
 
+    public GameObject loginMenue;
+    public GameObject mainMenue;
     public TMP_InputField username;
     public TMP_InputField password;
     public GameObject errorPanel;
@@ -53,8 +55,10 @@ public class login : MonoBehaviour
     public class Data
     {
         public int id;
+        public string name;
 
         public int getId() { return id; }
+        public string getName() { return name; }
     }
 
     [System.Serializable]
@@ -93,7 +97,9 @@ public class login : MonoBehaviour
     private void LoginSuccessfull(int id)
     {
         PlayerPrefs.SetString("LoginID", id.ToString());
-        SceneManager.LoadScene(1);
+        PlayerPrefs.SetString("LoginName", name);
+        loginMenue.SetActive(false);
+        mainMenue.SetActive(true);
     }
 
     public void RequestLogin()

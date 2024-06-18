@@ -170,6 +170,7 @@ public class SelectLevel : MonoBehaviour
 
     public void startLevel()
     {
+        PlayerPrefs.SetString("Level", level.ToString());
         SceneManager.LoadScene(level + 1);
     }
 
