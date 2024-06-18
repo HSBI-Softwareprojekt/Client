@@ -35,7 +35,7 @@ public class Relay : MonoBehaviour
             RelayServerData relayServerData = new RelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
             NetworkManager.Singleton.StartHost();
-
+            Debug.Log(PlayerPrefs.GetString("LoginID"));
 
         }
         catch (RelayServiceException ex)
@@ -53,7 +53,8 @@ public class Relay : MonoBehaviour
             RelayServerData relayServerData = new RelayServerData(joinAllocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
             NetworkManager.Singleton.StartClient();
-            
+            Debug.Log(PlayerPrefs.GetString("LoginID"));
+
         }
         catch (RelayServiceException ex)
         {

@@ -19,6 +19,8 @@ public class login : MonoBehaviour
     public TMP_InputField password;
     public GameObject errorPanel;
     public TMP_Text errorMsg;
+    public GameObject menuPanel;
+    public GameObject loginPanel;
 
     public static class JsonHelper
     {
@@ -93,7 +95,9 @@ public class login : MonoBehaviour
     private void LoginSuccessfull(int id)
     {
         PlayerPrefs.SetString("LoginID", id.ToString());
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        Debug.Log(PlayerPrefs.GetString("LoginID"));
+        loginPanel.SetActive(false);
+        menuPanel.SetActive(true);
     }
 
     public void RequestLogin()

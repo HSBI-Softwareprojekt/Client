@@ -3938,7 +3938,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &686073053
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5742,7 +5742,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1173877670
 Transform:
   m_ObjectHideFlags: 0
@@ -5783,8 +5783,8 @@ MonoBehaviour:
   password: {fileID: 272021927}
   errorPanel: {fileID: 2060933931}
   errorMsg: {fileID: 1272341490}
-  loginScreen: {fileID: 0}
-  menuScreen: {fileID: 0}
+  menuPanel: {fileID: 686073052}
+  loginPanel: {fileID: 1173877669}
 --- !u!1 &1230029266
 GameObject:
   m_ObjectHideFlags: 0
