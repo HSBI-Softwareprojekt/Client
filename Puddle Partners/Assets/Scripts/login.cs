@@ -98,9 +98,8 @@ public class login : MonoBehaviour
     {
         PlayerPrefs.SetString("LoginID", id.ToString());
         PlayerPrefs.SetString("LoginName", name);
-        //SceneManager.LoadScene(1);
-        /*loginMenue.SetActive(false);
-        mainMenue.SetActive(true);*/
+        loginMenue.SetActive(false);
+        mainMenue.SetActive(true);
     }
 
     public void RequestLogin()

@@ -17,6 +17,10 @@ public class FinishLine : MonoBehaviour
 {
     public GameObject errorPanel;
     public TMP_Text errorMsg;
+    private GameObject[] player;
+    private bool finishedLevel = false;
+    private GameObject playerCanvas;
+    public bool isAvailable;
 
     public static class JsonHelper
     {
@@ -82,6 +86,15 @@ public class FinishLine : MonoBehaviour
         return url;
     }
 
+    private void Start()
+    {
+        //playerSpawner = GameObject.FindGameObjectWithTag("Finish");
+        player = GameObject.FindGameObjectsWithTag("Player");
+        Debug.Log(player[0]);
+
+
+    }
+
     private void ErrorMsg(ArrayList msg)
     {
         string showMsg = "";
@@ -101,10 +114,13 @@ public class FinishLine : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag == "Player")
+        if (collision.tag == "Player" && !finishedLevel && isAvailable)
         {
+            finishedLevel = true;
             print("Finished Level!");
-            setLevel();
+            setLevel();          
+            showScoreboardMenu();
+            //UnlockNewLevel();
         }
     }
 
@@ -131,7 +147,8 @@ public class FinishLine : MonoBehaviour
             LevelData playerData = JsonConvert.DeserializeObject<LevelData>(responseText);
             if (playerData.getState() != 0)
             {
-                getScores();
+                //getScores();
+                UnlockNewLevel();
             }
             else
             {
@@ -183,6 +200,28 @@ public class FinishLine : MonoBehaviour
             ArrayList err = new ArrayList();
             err.Add("Kein gültiges Rückgabeformat vom Webserver");
             ErrorMsg(err);
+        }
+    }
+    
+    void UnlockNewLevel()
+    {
+        if (SceneManager.GetActiveScene().buildIndex >= PlayerPrefs.GetInt("ReachedIndex"))
+        {
+            PlayerPrefs.SetInt("ReachedIndex", SceneManager.GetActiveScene().buildIndex + 1);
+            PlayerPrefs.SetInt("UnlockedLevel", PlayerPrefs.GetInt("UnlockedLevel", 1) + 1);
+            PlayerPrefs.Save();
+        }
+    }
+    
+
+    void showScoreboardMenu()
+    {
+        foreach (GameObject p in player)
+        {
+            playerCanvas = p.transform.GetChild(4).gameObject;
+            Debug.Log(playerCanvas);
+            playerCanvas.SetActive(true);
+
         }
     }
 

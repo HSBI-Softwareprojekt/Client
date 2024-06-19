@@ -1425,10 +1425,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4776184d2bfa3c0499caf59297e071ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hostID:
-    m_InternalValue: 
-  clientID:
-    m_InternalValue: 
 --- !u!4 &232594017
 Transform:
   m_ObjectHideFlags: 0
@@ -5783,12 +5779,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f4e71c4d5591a04386a2bd14e8f2cae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  loginMenue: {fileID: 1173877669}
+  mainMenue: {fileID: 686073052}
   username: {fileID: 56657891}
   password: {fileID: 272021927}
   errorPanel: {fileID: 2060933931}
   errorMsg: {fileID: 1272341490}
-  menuPanel: {fileID: 686073052}
-  loginPanel: {fileID: 1173877669}
 --- !u!1 &1230029266
 GameObject:
   m_ObjectHideFlags: 0
