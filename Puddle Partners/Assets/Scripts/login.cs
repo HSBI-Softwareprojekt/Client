@@ -15,12 +15,12 @@ using Newtonsoft.Json;
 public class login : MonoBehaviour
 {
 
+    public GameObject loginMenue;
+    public GameObject mainMenue;
     public TMP_InputField username;
     public TMP_InputField password;
     public GameObject errorPanel;
     public TMP_Text errorMsg;
-    public GameObject menuPanel;
-    public GameObject loginPanel;
 
     public static class JsonHelper
     {
@@ -55,8 +55,10 @@ public class login : MonoBehaviour
     public class Data
     {
         public int id;
+        public string name;
 
         public int getId() { return id; }
+        public string getName() { return name; }
     }
 
     [System.Serializable]
@@ -92,12 +94,13 @@ public class login : MonoBehaviour
         errorMsg.text = "";
     }
 
-    private void LoginSuccessfull(int id)
+    private void LoginSuccessfull(int id, string name)
     {
         PlayerPrefs.SetString("LoginID", id.ToString());
-        Debug.Log(PlayerPrefs.GetString("LoginID"));
-        loginPanel.SetActive(false);
-        menuPanel.SetActive(true);
+        PlayerPrefs.SetString("LoginName", name);
+        //SceneManager.LoadScene(1);
+        /*loginMenue.SetActive(false);
+        mainMenue.SetActive(true);*/
     }
 
     public void RequestLogin()
@@ -123,7 +126,7 @@ public class login : MonoBehaviour
             Data playerData = JsonConvert.DeserializeObject<Data>(responseText);
             if (playerData.getId() != 0)
             {
-                LoginSuccessfull(playerData.getId());
+                LoginSuccessfull(playerData.getId(), playerData.getName());
             }
             else
             {

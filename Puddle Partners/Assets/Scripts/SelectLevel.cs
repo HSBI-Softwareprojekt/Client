@@ -11,12 +11,19 @@ using System;
 using System.Text;
 using UnityEngine.UI;
 using Newtonsoft.Json;
-using Unity.Netcode;
 
-public class FinishLine : MonoBehaviour
+public class SelectLevel : MonoBehaviour
 {
+
+    public GameObject forwards;
+    public GameObject backwards;
     public GameObject errorPanel;
+    public GameObject start;
     public TMP_Text errorMsg;
+    public TMP_Text levelText;
+    private int level = 1;
+    private Data playerData;
+    private int max_level = 4;
 
     public static class JsonHelper
     {
@@ -48,21 +55,15 @@ public class FinishLine : MonoBehaviour
     }
 
     [System.Serializable]
-    public class LevelData
+    public class Data
     {
-        public int state;
+        public int[] level;
 
-        public int getState() { return state; }
-    }
+        public int[] getLevel() { return level; }
 
-    [System.Serializable]
-    public class ScoreData
-    {
-        ArrayList data;
-
-        public ArrayList getScores()
+        public void setDefault()
         {
-            return data;
+            level[0] = 0;
         }
     }
 
@@ -99,20 +100,85 @@ public class FinishLine : MonoBehaviour
         errorMsg.text = "";
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void enableButtonOptions()
     {
-        if(collision.tag == "Player")
+        start.SetActive(true);
+        forwards.SetActive(true);
+    }
+
+    public void switchLevelUp()
+    {
+        level++;
+        bool is_active = false;
+        foreach(int lvl in playerData.getLevel())
         {
-            print("Finished Level!");
-            setLevel();
+            if (lvl == (level-1))
+            {
+                is_active = true;
+                break;
+            }
+        }
+        levelText.text = "Level " + level;
+        if(!is_active)
+        {
+            start.SetActive(false);
+        }
+        else
+        {
+            start.SetActive(true);
+        }
+        backwards.SetActive(true);
+        if(level == max_level)
+        {
+            forwards.SetActive(false);
         }
     }
 
-    private void setLevel()
+    public void switchLevelDown()
     {
-        WebRequest request = WebRequest.Create("http://" + HttpServer() + "/puddle_partners/set_level.php");
+        level--;
+        bool is_active = false;
+        if (level != 1)
+        {
+            foreach (int lvl in playerData.getLevel())
+            {
+                if (lvl == (level - 1))
+                {
+                    is_active = true;
+                    break;
+                }
+            }
+        } else
+        {
+            is_active = true;
+        }
+        levelText.text = "Level " + level;
+        if (!is_active)
+        {
+            start.SetActive(false);
+        }
+        else
+        {
+            start.SetActive(true);
+        }
+        forwards.SetActive(true);
+        if (level == 1)
+        {
+            backwards.SetActive(false);
+        }
+    }
+
+    public void startLevel()
+    {
+        PlayerPrefs.SetString("Level", level.ToString());
+        SceneManager.LoadScene(level + 1);
+    }
+
+    void OnEnable()
+    {
+        WebRequest request = WebRequest.Create("http://" + HttpServer() + "/puddle_partners/get_level.php");
         ASCIIEncoding encoding = new ASCIIEncoding();
-        string postData = "ID=" + PlayerPrefs.GetString("LoginID") + "&LEVEL=" + PlayerPrefs.GetString("Level");
+        string postData = "ID="+ PlayerPrefs.GetString("LoginID");
         byte[] data = encoding.GetBytes(postData);
         request.Method = "POST";
         request.ContentType = "application/x-www-form-urlencoded";
@@ -128,10 +194,14 @@ public class FinishLine : MonoBehaviour
         stream.Close();
         try
         {
-            LevelData playerData = JsonConvert.DeserializeObject<LevelData>(responseText);
-            if (playerData.getState() != 0)
+            playerData = JsonConvert.DeserializeObject<Data>(responseText);
+            if (playerData.getLevel().Length != 0 && playerData.getLevel()[0] != 0)
             {
-                getScores();
+                if(playerData.getLevel().Length == 1 && playerData.getLevel()[0] == -1)
+                {
+                    playerData.setDefault();
+                } 
+                enableButtonOptions();
             }
             else
             {
@@ -147,43 +217,6 @@ public class FinishLine : MonoBehaviour
         }
     }
 
-    private void getScores()
-    {
-        WebRequest request = WebRequest.Create("http://" + HttpServer() + "/puddle_partners/scoreboard.php");
-        ASCIIEncoding encoding = new ASCIIEncoding();
-        string postData = "HOST=" + PlayerPrefs.GetString("LoginID") + "&CLIENT=" + PlayerPrefs.GetString("PartnerID") + "&TIME=";
-        byte[] data = encoding.GetBytes(postData);
-        request.Method = "POST";
-        request.ContentType = "application/x-www-form-urlencoded";
-        request.ContentLength = data.Length;
-        Stream stream = request.GetRequestStream();
-        stream.Write(data, 0, data.Length);
-        stream.Close();
-        WebResponse response = request.GetResponse();
-        stream = response.GetResponseStream();
-        StreamReader reader = new StreamReader(stream);
-        string responseText = reader.ReadToEnd();
-        reader.Close();
-        stream.Close();
-        try
-        {
-            ScoreData playerData = JsonConvert.DeserializeObject<ScoreData>(responseText);
-            if ((int)playerData.getScores()[0] != 0)
-            {
-                
-            }
-            else
-            {
-                Error error = JsonConvert.DeserializeObject<Error>(responseText);
-                ErrorMsg(error.getError());
-            }
-        }
-        catch (Exception)
-        {
-            ArrayList err = new ArrayList();
-            err.Add("Kein gültiges Rückgabeformat vom Webserver");
-            ErrorMsg(err);
-        }
-    }
+
 
 }

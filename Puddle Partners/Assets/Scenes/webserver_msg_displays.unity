@@ -5741,10 +5741,6 @@ MonoBehaviour:
   start: {fileID: 748764614}
   errorMsg: {fileID: 386334229}
   levelText: {fileID: 101575977}
-  level: 1
-  playerData:
-    level: 
-  max_level: 4
 --- !u!1 &1676294983
 GameObject:
   m_ObjectHideFlags: 0
