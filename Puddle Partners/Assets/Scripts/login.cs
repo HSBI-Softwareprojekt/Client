@@ -94,12 +94,13 @@ public class login : MonoBehaviour
         errorMsg.text = "";
     }
 
-    private void LoginSuccessfull(int id)
+    private void LoginSuccessfull(int id, string name)
     {
         PlayerPrefs.SetString("LoginID", id.ToString());
         PlayerPrefs.SetString("LoginName", name);
-        loginMenue.SetActive(false);
-        mainMenue.SetActive(true);
+        //SceneManager.LoadScene(1);
+        /*loginMenue.SetActive(false);
+        mainMenue.SetActive(true);*/
     }
 
     public void RequestLogin()
@@ -125,7 +126,7 @@ public class login : MonoBehaviour
             Data playerData = JsonConvert.DeserializeObject<Data>(responseText);
             if (playerData.getId() != 0)
             {
-                LoginSuccessfull(playerData.getId());
+                LoginSuccessfull(playerData.getId(), playerData.getName());
             }
             else
             {

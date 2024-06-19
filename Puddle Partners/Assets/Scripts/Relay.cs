@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -9,20 +10,53 @@ using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
 
-public class Relay : MonoBehaviour
+public class Relay : NetworkBehaviour
 {
-    // Start is called before the first frame update
-    private async void Start()
+
+    private NetworkVariable<int> hostId = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private NetworkVariable<int> clientId = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+    public async void Start()
     {
         await UnityServices.InitializeAsync();
         AuthenticationService.Instance.SignedIn += () =>
-        {
-
-        };
+        { };
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
     }
 
-    private async void CreateRelay()
+    public override void OnNetworkSpawn()
+    {
+        hostId.OnValueChanged += (int previousValue, int newValue) =>
+        {
+            Debug.Log("Host ID: " + hostId.Value);
+        };
+        clientId.OnValueChanged += (int previousValue, int newValue) =>
+        {
+            Debug.Log("Client ID: " + clientId.Value);
+        };
+    }
+
+    public void Update()
+    {
+        if(IsHost && hostId.Value == 0)
+        {
+            hostId.Value = Int32.Parse(PlayerPrefs.GetString("LoginID"));
+        }
+        if(!IsHost && IsClient && clientId.Value == 0)
+        {
+            clientId.Value = Int32.Parse(PlayerPrefs.GetString("LoginID"));
+        }
+        if(hostId.Value != 0)
+        {
+            Debug.Log("Host ID: " + hostId.Value);
+        }
+        if (clientId.Value != 0)
+        {
+            Debug.Log("Client ID: " + clientId.Value);
+        }
+    }
+
+    public async void CreateRelay()
     {
         try
         {
@@ -34,6 +68,7 @@ public class Relay : MonoBehaviour
             RelayServerData relayServerData = new RelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
             NetworkManager.Singleton.StartHost();
+            //hostId.Value = Int32.Parse(PlayerPrefs.GetString("LoginID"));
         }
         catch (RelayServiceException ex)
         {
@@ -41,7 +76,7 @@ public class Relay : MonoBehaviour
         }
     }
 
-    private async void JoinRelay(string joinCode)
+        public async void JoinRelay(string joinCode)
     {
         try
         {
@@ -50,12 +85,12 @@ public class Relay : MonoBehaviour
             RelayServerData relayServerData = new RelayServerData(joinAllocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
             NetworkManager.Singleton.StartClient();
+            clientId.Value = Int32.Parse(PlayerPrefs.GetString("LoginID"));
         }
         catch (RelayServiceException ex)
         {
-            Debug.Log(ex);
+           Debug.Log(ex);
         }
-        
     }
 
 }

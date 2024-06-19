@@ -131,7 +131,6 @@ public class FinishLine : MonoBehaviour
             LevelData playerData = JsonConvert.DeserializeObject<LevelData>(responseText);
             if (playerData.getState() != 0)
             {
-                PlayerPrefab.Add(PlayerPrefs.GetString("LoginID"));
                 getScores();
             }
             else

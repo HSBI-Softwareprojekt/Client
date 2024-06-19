@@ -3292,7 +3292,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 782799365}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 6979d52fda0579441a2122b95abaf337, type: 3}
@@ -3388,7 +3388,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 782799365}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!1 &825001892
 GameObject:
   m_ObjectHideFlags: 0
@@ -4153,6 +4153,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1173877670}
   - component: {fileID: 1173877671}
+  - component: {fileID: 1173877674}
+  - component: {fileID: 1173877673}
   m_Layer: 0
   m_Name: Login
   m_TagString: Untagged
@@ -4196,10 +4198,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f4e71c4d5591a04386a2bd14e8f2cae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  loginMenue: {fileID: 0}
+  mainMenue: {fileID: 0}
   username: {fileID: 56657891}
   password: {fileID: 272021927}
   errorPanel: {fileID: 2060933931}
   errorMsg: {fileID: 1272341490}
+--- !u!114 &1173877673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1173877669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4776184d2bfa3c0499caf59297e071ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hostID:
+    m_InternalValue: 1
+  clientID:
+    m_InternalValue: 1
+--- !u!114 &1173877674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1173877669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3103854419
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &1230029266
 GameObject:
   m_ObjectHideFlags: 0
@@ -5157,6 +5198,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1173877671}
         m_TargetAssemblyTypeName: login, Assembly-CSharp
         m_MethodName: RequestLogin
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1173877673}
+        m_TargetAssemblyTypeName: Relay, Assembly-CSharp
+        m_MethodName: CreateRelay
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
