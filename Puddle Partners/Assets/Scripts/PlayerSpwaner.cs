@@ -9,7 +9,6 @@ public class PlayerSpwaner : NetworkBehaviour
 {
     [SerializeField]
     private GameObject Player;
-
     private void Start()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -21,7 +20,7 @@ public class PlayerSpwaner : NetworkBehaviour
 
     private void Sceneloaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
-        if (IsHost && sceneName == "Level_1")
+        if ((IsHost && sceneName == "Level_1") || (IsHost && sceneName == "Level_2"))
         {
             foreach(ulong id in clientsCompleted)
             {

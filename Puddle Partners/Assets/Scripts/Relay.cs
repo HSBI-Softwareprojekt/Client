@@ -8,11 +8,12 @@ using Unity.Services.Core;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class Relay : MonoBehaviour
+public class Relay : NetworkBehaviour
 {
-    // Start is called before the first frame update
+    public NetworkVariable<string> hostID = null;
+    public NetworkVariable<string> clientID = null;
+
     private async void Start()
     {
         await UnityServices.InitializeAsync();
@@ -23,7 +24,19 @@ public class Relay : MonoBehaviour
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
     }
 
-    public async void CreateRelay()
+    public void Update()
+    {
+        if (hostID != null)
+        {
+            Debug.Log("Host ID: " + hostID.Value);
+        }
+        if (clientID != null)
+        {
+            Debug.Log("Client ID: " + clientID.Value);
+        }
+    }
+
+    private async void CreateRelay()
     {
         try
         {
@@ -35,8 +48,7 @@ public class Relay : MonoBehaviour
             RelayServerData relayServerData = new RelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
             NetworkManager.Singleton.StartHost();
-            Debug.Log(PlayerPrefs.GetString("LoginID"));
-
+            hostID = new NetworkVariable<string>(PlayerPrefs.GetString("LoginID"));
         }
         catch (RelayServiceException ex)
         {
@@ -44,7 +56,7 @@ public class Relay : MonoBehaviour
         }
     }
 
-    public async void JoinRelay(string joinCode)
+    private async void JoinRelay(string joinCode)
     {
         try
         {
@@ -53,14 +65,13 @@ public class Relay : MonoBehaviour
             RelayServerData relayServerData = new RelayServerData(joinAllocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
             NetworkManager.Singleton.StartClient();
-            Debug.Log(PlayerPrefs.GetString("LoginID"));
-
+            clientID = new NetworkVariable<string>(PlayerPrefs.GetString("LoginID"));
         }
         catch (RelayServiceException ex)
         {
             Debug.Log(ex);
         }
-        
+
     }
 
 }

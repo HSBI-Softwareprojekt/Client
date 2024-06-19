@@ -415,7 +415,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1835980577}
         m_TargetAssemblyTypeName: LevelSelection, Assembly-CSharp
-        m_MethodName: StartLevel
+        m_MethodName: BeginnLevel
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -857,7 +857,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1835980577}
         m_TargetAssemblyTypeName: LevelSelection, Assembly-CSharp
-        m_MethodName: StartLevel
+        m_MethodName: BeginnLevel
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1425,6 +1425,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4776184d2bfa3c0499caf59297e071ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hostID:
+    m_InternalValue: 
+  clientID:
+    m_InternalValue: 
 --- !u!4 &232594017
 Transform:
   m_ObjectHideFlags: 0
@@ -1775,7 +1779,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1835980577}
         m_TargetAssemblyTypeName: LevelSelection, Assembly-CSharp
-        m_MethodName: StartLevel
+        m_MethodName: BeginnLevel
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5626,7 +5630,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1835980577}
         m_TargetAssemblyTypeName: LevelSelection, Assembly-CSharp
-        m_MethodName: StartLevel
+        m_MethodName: BeginnLevel
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
