@@ -1,39 +1,41 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class RangedEnemy : MonoBehaviour
 {
     [Header("Attack Parameters")]
-    [SerializeField] private float attackCooldown;
-    [SerializeField] private float range;
-    [SerializeField] private int damage;
+    [SerializeField] private float attackCooldown; // Abklingzeit zwischen Angriffen
+    [SerializeField] private float range; // Reichweite des Angriffs
+    [SerializeField] private int damage; // Schaden des Angriffs
 
     [Header("Ranged Attack")]
-    [SerializeField] private Transform firepoint;
-    [SerializeField] private GameObject[] fireballs;
+    [SerializeField] private Transform firepoint; // Ausgangspunkt für die Projektile
+    [SerializeField] private GameObject[] fireballs; // Array von Feuerbällen für den Angriff
 
     [Header("Collider Parameters")]
-    [SerializeField] private float colliderDistance;
-    [SerializeField] private BoxCollider2D boxCollider;
+    [SerializeField] private float colliderDistance; // Abstand des Kolliders zur Erkennung des Spielers
+    [SerializeField] private BoxCollider2D boxCollider; // BoxCollider2D-Komponente zur Erkennung des Spielers
 
     [Header("Player Layer")]
-    [SerializeField] private LayerMask playerLayer;
-    private float cooldownTimer = Mathf.Infinity;
+    [SerializeField] private LayerMask playerLayer; // LayerMask für den Spieler
+    private float cooldownTimer = Mathf.Infinity; // Timer zur Überprüfung der Abklingzeit
 
-    //References
-    private Animator anim;
-    private EnemyPatrol enemyPatrol;
+    // Referenzen
+    private Animator anim; // Animator-Komponente
+    private EnemyPatrol enemyPatrol; // Referenz zur EnemyPatrol-Komponente
 
     private void Awake()
     {
+        // Initialisiert die Animator- und EnemyPatrol-Komponenten
         anim = GetComponent<Animator>();
         enemyPatrol = GetComponentInParent<EnemyPatrol>();
     }
 
     private void Update()
     {
+        // Erhöht den Abklingzeit-Timer
         cooldownTimer += Time.deltaTime;
 
-        //Attack only when player in sight?
+        // Greift nur an, wenn der Spieler in Sichtweite ist
         if (PlayerInSight())
         {
             if (cooldownTimer >= attackCooldown)
@@ -43,18 +45,22 @@ public class RangedEnemy : MonoBehaviour
             }
         }
 
+        // Deaktiviert das Patrouillieren, wenn der Spieler in Sichtweite ist
         if (enemyPatrol != null)
             enemyPatrol.enabled = !PlayerInSight();
     }
 
     private void RangedAttack()
     {
+        // Setzt den Abklingzeit-Timer zurück und aktiviert das Projektil
         cooldownTimer = 0;
         fireballs[FindFireball()].transform.position = firepoint.position;
         fireballs[FindFireball()].GetComponent<EnemyProjectile>().ActivateProjectile();
     }
+
     private int FindFireball()
     {
+        // Findet das erste inaktive Projektil im Array
         for (int i = 0; i < fireballs.Length; i++)
         {
             if (!fireballs[i].activeInHierarchy)
@@ -65,17 +71,21 @@ public class RangedEnemy : MonoBehaviour
 
     private bool PlayerInSight()
     {
-        RaycastHit2D hit =
-            Physics2D.BoxCast(boxCollider.bounds.center + transform.right * range * transform.localScale.x * colliderDistance,
+        // Überprüft, ob der Spieler in Sichtweite ist, indem ein BoxCast verwendet wird
+        RaycastHit2D hit = Physics2D.BoxCast(
+            boxCollider.bounds.center + transform.right * range * transform.localScale.x * colliderDistance,
             new Vector3(boxCollider.bounds.size.x * range, boxCollider.bounds.size.y, boxCollider.bounds.size.z),
             0, Vector2.left, 0, playerLayer);
 
         return hit.collider != null;
     }
+
     private void OnDrawGizmos()
     {
+        // Zeichnet eine rote Box zur Visualisierung der Erkennungsreichweite
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(boxCollider.bounds.center + transform.right * range * transform.localScale.x * colliderDistance,
+        Gizmos.DrawWireCube(
+            boxCollider.bounds.center + transform.right * range * transform.localScale.x * colliderDistance,
             new Vector3(boxCollider.bounds.size.x * range, boxCollider.bounds.size.y, boxCollider.bounds.size.z));
     }
 }
