@@ -7,6 +7,7 @@ using Cinemachine;
 public class PlayerMovement : NetworkBehaviour
 {
     public CharacterController2D controller;
+    public Animator animator;
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
     [SerializeField] private AudioListener listener;
     public float runSpeed = 20f;
@@ -22,10 +23,15 @@ public class PlayerMovement : NetworkBehaviour
             return;
         }
 
+
         horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
+
+        animator.SetFloat("Speed", Mathf.Abs(horizontalMove));
+
         if(Input.GetButtonDown("Jump"))
         {
             jump = true;
+            animator.SetBool("IsJumping", true);
         }
     }
 
@@ -33,6 +39,11 @@ public class PlayerMovement : NetworkBehaviour
     {
         controller.Move(horizontalMove * Time.fixedDeltaTime, false, jump);
         jump = false;
+    }
+
+    public void OnLanding()
+    {
+        animator.SetBool("IsJumping", false);
     }
 
     public override void OnNetworkSpawn()
