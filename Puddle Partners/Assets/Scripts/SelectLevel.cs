@@ -11,6 +11,7 @@ using System;
 using System.Text;
 using UnityEngine.UI;
 using Newtonsoft.Json;
+using Unity.Netcode;
 
 public class SelectLevel : MonoBehaviour
 {
@@ -171,7 +172,7 @@ public class SelectLevel : MonoBehaviour
     public void startLevel()
     {
         PlayerPrefs.SetString("Level", level.ToString());
-        SceneManager.LoadScene(level + 1);
+        NetworkManager.Singleton.SceneManager.LoadScene("Level_"+level.ToString() + "_test", LoadSceneMode.Single);
     }
 
     void OnEnable()

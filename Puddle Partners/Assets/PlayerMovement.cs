@@ -12,7 +12,7 @@ public class PlayerMovement : NetworkBehaviour
     public float runSpeed = 20f;
     float horizontalMove = 0f;
     bool jump = false;
-    bool crouch = false;
+    //bool crouch = false;
 
     // Update is called once per frame
     void Update()

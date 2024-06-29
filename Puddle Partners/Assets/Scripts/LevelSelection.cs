@@ -28,6 +28,6 @@ public class LevelSelection : MonoBehaviour
 
     public void BeginnLevel(int levelId)
     {
-        NetworkManager.Singleton.SceneManager.LoadScene("Level_" + levelId.ToString(), LoadSceneMode.Single);
+        NetworkManager.Singleton.SceneManager.LoadScene("Level_" + levelId.ToString() + "_test", LoadSceneMode.Single);
     }
 }
