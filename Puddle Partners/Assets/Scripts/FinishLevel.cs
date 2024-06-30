@@ -9,13 +9,15 @@ using System.Net;
 using System.Text;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using Unity.Collections;
 
 public class FinishLevel : NetworkBehaviour
 {
 
     private NetworkVariable<bool> finishedLevel = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    private NetworkVariable<bool> clientCall = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    private float elapsed_time = 0.0f;
+    private NetworkVariable<FixedString4096Bytes> scoreboardData = new NetworkVariable<FixedString4096Bytes>("", NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private float elapsedTime = 0.0f;
+    private float nowTime = 0.0f;
     public GameObject errorPanel;
     public TMP_Text errorMsg;
     public GameObject scoreboardCanvas;
@@ -221,10 +223,14 @@ public class FinishLevel : NetworkBehaviour
 
     public void Start()
     {
+        if(NetworkManager.IsHost)
+        {
+            nowTime = Time.time;
+        }
         finishedLevel.OnValueChanged += SetLevel;
         if(!NetworkManager.IsHost)
         {
-            clientCall.OnValueChanged += GetScore;
+            scoreboardData.OnValueChanged += GetScore;
         }
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
     }
@@ -236,22 +242,14 @@ public class FinishLevel : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void ClientCallServerRpc(ServerRpcParams serverRpcParams = default)
+    public void ClientCallServerRpc(FixedString4096Bytes board, ServerRpcParams serverRpcParams = default)
     {
-        clientCall.Value = true;
+        scoreboardData.Value = board;
     }
 
     private static float GetCurrentTimeOffset(float continueTime)
     {
         return Time.time - continueTime;
-    }
-
-    public void Update()
-    {
-        if (!finishedLevel.Value)
-        {
-            elapsed_time = GetCurrentTimeOffset(elapsed_time);
-        }
     }
 
     private void SetLevel(bool oldVal, bool newVal)
@@ -300,7 +298,9 @@ public class FinishLevel : NetworkBehaviour
 
     private void SetScores()
     {
-        TimeSpan time = TimeSpan.FromSeconds(elapsed_time);
+        elapsedTime = GetCurrentTimeOffset(nowTime);
+        TimeSpan time = TimeSpan.FromSeconds(elapsedTime);
+        Debug.Log(time.ToString("hh':'mm':'ss"));
         WebRequest request = WebRequest.Create("http://" + HttpServer() + "/puddle_partners/scoreboard.php");
         ASCIIEncoding encoding = new ASCIIEncoding();
         string postData = "HOST_ID=" + PlayerPrefs.GetString("HostID") + "&CLIENT_ID=" + PlayerPrefs.GetString("ClientID") + "&LEVEL=" + lvl.ToString() + "&TIME=" + time.ToString("hh':'mm':'ss");
@@ -340,8 +340,7 @@ public class FinishLevel : NetworkBehaviour
                 }
                 score.SetDataCount((aData.Count/9));
                 CreateScoreboard(score);
-                ClientCallServerRpc();
-                showScoreboardMenu();
+                ClientCallServerRpc(responseText);
             }
             else
             {
@@ -351,6 +350,7 @@ public class FinishLevel : NetworkBehaviour
         }
         catch (Exception e)
         {
+            Debug.Log(e);
             ArrayList err = new ArrayList();
             err.Add("Kein gültiges Rückgabeformat vom Webserver");
             ErrorMsg(err);
@@ -373,9 +373,9 @@ public class FinishLevel : NetworkBehaviour
         {
             GameObject newScore = Instantiate(template);
             newScore.transform.SetParent(scorePanel.transform, false);
-            if (i != 0) {
+            /*if (i != 0) {
                 newScore.transform.position = newScore.transform.position + new Vector3(0, (-110.0f*i), 0);
-            }
+            }*/
             newScore.name = "Score_Rank_" + (i + 1).ToString();
             GameObject scoreRank = newScore.transform.GetChild(2).gameObject;
             scoreRank.GetComponent<TextMeshProUGUI>().text = score.GetRank(i).ToString();
@@ -394,23 +394,23 @@ public class FinishLevel : NetworkBehaviour
                 ownScorePlayer1.GetComponent<TextMeshProUGUI>().text = score.GetPlayer1(i);
                 GameObject ownScorePlayer2 = ownScorePanel.transform.GetChild(3).gameObject;
                 ownScorePlayer2.GetComponent<TextMeshProUGUI>().text = score.GetPlayer2(i);
-                if(score.GetNewScore(i) == 0)
+                if(score.GetNewScore(i) == 1)
                 {
                     GameObject ownIsNew = ownScorePanel.transform.GetChild(4).gameObject;
                     ownIsNew.GetComponent<TextMeshProUGUI>().text = "NEU";
                     GameObject ownScoreOldTime = ownScorePanel.transform.GetChild(5).gameObject;
                     ownScoreOldTime.GetComponent<TextMeshProUGUI>().text = "Alt: -";
-                } else if (score.GetNewScore(i) == 1 && score.GetBetter(i) == 0)
+                } else if (score.GetNewScore(i) == 0 && score.GetBetter(i) == 0)
                 {
                     GameObject ownIsNew = ownScorePanel.transform.GetChild(4).gameObject;
                     ownIsNew.GetComponent<TextMeshProUGUI>().text = "Schlechter";
                     GameObject ownScoreOldTime = ownScorePanel.transform.GetChild(5).gameObject;
                     ownScoreOldTime.GetComponent<TextMeshProUGUI>().text = "Alt:  "+ score.GetOldTime(i);
-                } else if (score.GetNewScore(i) == 1 && score.GetBetter(i) == 1)
+                } else if (score.GetNewScore(i) == 0 && score.GetBetter(i) == 1)
                 {
                     GameObject ownIsNew = ownScorePanel.transform.GetChild(4).gameObject;
                     ownIsNew.GetComponent<TextMeshProUGUI>().text = "Besser";
-                    GameObject ownScoreOldTime = ownScorePanel.transform.GetChild(4).gameObject;
+                    GameObject ownScoreOldTime = ownScorePanel.transform.GetChild(5).gameObject;
                     ownScoreOldTime.GetComponent<TextMeshProUGUI>().text = "Alt: " + score.GetOldTime(i);
                 }
                 GameObject ownScoreNowTime = ownScorePanel.transform.GetChild(6).gameObject;
@@ -449,16 +449,34 @@ public class FinishLevel : NetworkBehaviour
             GameObject ownScoreNowTime = ownScorePanel.transform.GetChild(6).gameObject;
             ownScoreNowTime.GetComponent<TextMeshProUGUI>().text = "Neu: " + score.GetNowTime(50);
         }
-    }
-
-    private void GetScore(bool oldVal, bool newVal)
-    {
         scoreboardCanvas.SetActive(true);
     }
 
-    private void showScoreboardMenu()
+    private void GetScore(FixedString4096Bytes oldVal, FixedString4096Bytes newVal)
     {
-        scoreboardCanvas.SetActive(true);
+        string responseText = newVal.Value;
+        ScoreData sData = JsonConvert.DeserializeObject<ScoreData>(responseText);
+        ArrayList aData = sData.getScore();
+        if (aData.Count != 0)
+        {
+            Score score = new Score();
+            int s = 0;
+            for (int i = 0; i < aData.Count; i += 9)
+            {
+                score.SetRank(s, Int32.Parse(aData[i].ToString()));
+                score.SetPlayer1(s, aData[(i + 1)].ToString());
+                score.SetPlayer2(s, aData[(i + 2)].ToString());
+                score.SetLevel(s, Int32.Parse(aData[(i + 3)].ToString()));
+                score.SetOwn(s, Int32.Parse(aData[(i + 4)].ToString()));
+                score.SetNewScore(s, Int32.Parse(aData[(i + 5)].ToString()));
+                score.SetBetter(s, Int32.Parse(aData[(i + 6)].ToString()));
+                score.SetOldTime(s, aData[(i + 7)].ToString());
+                score.SetNowTime(s, aData[(i + 8)].ToString());
+                s++;
+            }
+            score.SetDataCount((aData.Count / 9));
+            CreateScoreboard(score);
+        }
     }
 
     public void ErrorBack()
