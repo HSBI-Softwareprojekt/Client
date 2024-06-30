@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Rock
   - Ladder
+  - Umbrella
   layers:
   - Default
   - TransparentFX

@@ -7,32 +7,39 @@ public class GrabController : MonoBehaviour
 {
     public Transform grabDetect;
     public Transform objectHolder;
+    public Transform umbrellaPosition;
     public float rayDist;
     private GameObject grabbedObject;
-    private Collider2D playerCollider;
+    private Collider2D[] playerColliders;
     private float oldPosition;
+//0,06 0.05
 
     void Start()
     {
-        playerCollider = GetComponent<Collider2D>(); // Assumes the player has a Collider2D component
+        playerColliders = GetComponents<Collider2D>(); // Assumes the player has a Collider2D component
     }
 
     void Update()
     {
         if (grabbedObject == null)
         {
-            // Only check for objects to grab if we are not already holding one
             RaycastHit2D grabCheck = Physics2D.Raycast(grabDetect.position, Vector2.right * transform.localScale.x, rayDist);
-            if (grabCheck.collider != null && grabCheck.collider.CompareTag("Rock"))
+            if (grabCheck.collider != null && (grabCheck.collider.CompareTag("Rock") || grabCheck.collider.CompareTag("Umbrella")))
             {
                 if (Input.GetButton("Grab"))
                 {
-                    // Grab the object
                     grabbedObject = grabCheck.collider.gameObject;
-                    Collider2D grabbedCollider = grabbedObject.GetComponent<Collider2D>();
-                    Physics2D.IgnoreCollision(playerCollider, grabbedCollider, true); // Ignore collisions with the grabbed object
-                    grabbedObject.transform.parent = objectHolder;
-                    grabbedObject.transform.position = objectHolder.position;
+                    IgnoreAllCollisions(grabbedObject, true);
+                    if (grabbedObject.CompareTag("Umbrella"))
+                    {
+                        grabbedObject.transform.SetParent(umbrellaPosition);
+                        grabbedObject.transform.position = umbrellaPosition.position;
+                    }
+                    else
+                    {
+                        grabbedObject.transform.SetParent(objectHolder);
+                        grabbedObject.transform.position = objectHolder.position;
+                    }
                     grabbedObject.GetComponent<Rigidbody2D>().isKinematic = true;
                 }
             }
@@ -41,29 +48,37 @@ public class GrabController : MonoBehaviour
         {
             if (!Input.GetButton("Grab"))
             {
-                // Release the object
-                Collider2D grabbedCollider = grabbedObject.GetComponent<Collider2D>();
-                Physics2D.IgnoreCollision(playerCollider, grabbedCollider, false); // Re-enable collisions with the released object
-                grabbedObject.transform.parent = null;
+                IgnoreAllCollisions(grabbedObject, false);
+                grabbedObject.transform.SetParent(null);
                 grabbedObject.GetComponent<Rigidbody2D>().isKinematic = false;
                 throwObject(grabbedObject);
                 grabbedObject = null;
             }
         }
     }
-    private void throwObject(GameObject grabbedObject)
+
+    private void IgnoreAllCollisions(GameObject obj, bool ignore)
     {
-        if (transform.GetComponent<Rigidbody2D>().velocity.magnitude > 0) 
+        Collider2D[] objectColliders = obj.GetComponents<Collider2D>();
+        foreach (Collider2D playerCollider in playerColliders)
         {
-            if (transform.localScale.x > 0)
+            foreach (Collider2D objCollider in objectColliders)
             {
-                grabbedObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(400f, 100f));
-            }
-            else
-            {
-                grabbedObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(-400f, 100f));
+                Physics2D.IgnoreCollision(playerCollider, objCollider, ignore);
             }
         }
+    }
+
+    private void throwObject(GameObject obj)
+    {
+        if (obj.CompareTag("Umbrella"))
+        {
+            return;
+        }
+
+        Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
+        Vector2 forceDirection = transform.localScale.x > 0 ? new Vector2(400f, 100f) : new Vector2(-400f, 100f);
+        rb.AddForce(forceDirection);
     }
 }
 
