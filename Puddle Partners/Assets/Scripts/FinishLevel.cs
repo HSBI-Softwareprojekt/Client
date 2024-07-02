@@ -10,14 +10,20 @@ using System.Text;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using Unity.Collections;
+using Unity.VisualScripting;
 
 public class FinishLevel : NetworkBehaviour
 {
 
     private NetworkVariable<bool> finishedLevel = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private NetworkVariable<FixedString4096Bytes> scoreboardData = new NetworkVariable<FixedString4096Bytes>("", NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private NetworkVariable<bool> water = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private NetworkVariable<float> syncTime = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    public float levelTime = 0.0f;
     private float elapsedTime = 0.0f;
     private float nowTime = 0.0f;
+    private bool gameover = false;
+    private RectTransform rt;
     public GameObject errorPanel;
     public TMP_Text errorMsg;
     public GameObject scoreboardCanvas;
@@ -25,7 +31,12 @@ public class FinishLevel : NetworkBehaviour
     public GameObject mainMenue;
     public GameObject nextLevel;
     public GameObject scoreboardPanel;
+    public GameObject waterRect;
+    public GameObject gameoverPanel;
     public int lvl;
+    public float waterMaxHeigth = 0.0f;
+    public float waterSpeedHeigth = 0.0f;
+    public bool lastLevel = false;
 
     public static class JsonHelper
     {
@@ -223,16 +234,55 @@ public class FinishLevel : NetworkBehaviour
 
     public void Start()
     {
-        if(NetworkManager.IsHost)
+        rt = waterRect.GetComponent<RectTransform>();
+        if (NetworkManager.IsHost)
         {
             nowTime = Time.time;
         }
         finishedLevel.OnValueChanged += SetLevel;
-        if(!NetworkManager.IsHost)
+        water.OnValueChanged += SetWater;
+        if (!NetworkManager.IsHost)
         {
             scoreboardData.OnValueChanged += GetScore;
+            syncTime.OnValueChanged += ClientGameover;
         }
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
+    }
+
+    public void Update()
+    {
+        if (!gameover)
+        {
+            if (water.Value)
+            {
+                if (rt.localScale.y < waterMaxHeigth)
+                {
+                    rt.transform.localScale = new Vector3(rt.transform.localScale.x, (rt.transform.localScale.y + waterSpeedHeigth), 1);
+                    rt.transform.position = new Vector3(rt.transform.position.x, (rt.transform.position.y + (waterSpeedHeigth/2)), rt.transform.position.z);
+                }
+                else
+                {
+                    if (NetworkManager.IsHost)
+                    {
+                        Gameover();
+                    }
+                }
+            }
+            if (!finishedLevel.Value && !water.Value)
+            {
+                elapsedTime = GetCurrentTimeOffset(nowTime);
+                if (elapsedTime > levelTime && NetworkManager.IsHost)
+                {
+                    WaterServerRpc();
+                }
+            }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void WaterServerRpc(ServerRpcParams serverRpcParams = default)
+    {
+        water.Value = true;
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -245,6 +295,43 @@ public class FinishLevel : NetworkBehaviour
     public void ClientCallServerRpc(FixedString4096Bytes board, ServerRpcParams serverRpcParams = default)
     {
         scoreboardData.Value = board;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SyncTimeServerRpc(ServerRpcParams serverRpcParams = default)
+    {
+        syncTime.Value = elapsedTime;
+    }
+
+    private void Gameover()
+    {
+        gameover = true;
+        if(NetworkManager.IsHost)
+        {
+            GameObject newChance = gameoverPanel.transform.GetChild(0).gameObject.gameObject.transform.GetChild(2).gameObject;
+            GameObject returnMain = gameoverPanel.transform.GetChild(0).gameObject.gameObject.transform.GetChild(3).gameObject;
+            newChance.SetActive(true);
+            returnMain.SetActive(true);
+            SyncTimeServerRpc();
+        }
+        TimeSpan time = TimeSpan.FromSeconds(syncTime.Value);
+        GameObject lvlTime = gameoverPanel.transform.GetChild(0).gameObject.gameObject.transform.GetChild(0).gameObject;
+        lvlTime.GetComponent<TextMeshProUGUI>().text = "Zeit: " + time.ToString("hh':'mm':'ss");
+        gameoverPanel.SetActive(true);
+    }
+
+    private void ClientGameover(float oldVal, float newVal) {
+        Gameover();
+    }
+
+    public void retry()
+    {
+        NetworkManager.Singleton.SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
+    }
+
+    private void SetWater(bool oldVal, bool newVal)
+    {
+        waterRect.SetActive(true);
     }
 
     private static float GetCurrentTimeOffset(float continueTime)
@@ -279,7 +366,10 @@ public class FinishLevel : NetworkBehaviour
                 {
                     SetScores();
                     mainMenue.SetActive(true);
-                    nextLevel.SetActive(true);
+                    if (!lastLevel)
+                    {
+                        nextLevel.SetActive(true);
+                    }
                 }
             }
             else
@@ -373,9 +463,6 @@ public class FinishLevel : NetworkBehaviour
         {
             GameObject newScore = Instantiate(template);
             newScore.transform.SetParent(scorePanel.transform, false);
-            /*if (i != 0) {
-                newScore.transform.position = newScore.transform.position + new Vector3(0, (-110.0f*i), 0);
-            }*/
             newScore.name = "Score_Rank_" + (i + 1).ToString();
             GameObject scoreRank = newScore.transform.GetChild(2).gameObject;
             scoreRank.GetComponent<TextMeshProUGUI>().text = score.GetRank(i).ToString();
@@ -481,16 +568,8 @@ public class FinishLevel : NetworkBehaviour
 
     public void ErrorBack()
     {
-        if (NetworkManager.IsHost)
-        {
-            NetworkManager.Singleton.Shutdown();
-            SceneManager.LoadScene(0);
-        }
-        else
-        {
-            NetworkManager.Singleton.Shutdown();
-            SceneManager.LoadScene(0);
-        }
+        NetworkManager.Singleton.Shutdown();
+        SceneManager.LoadScene(0);
     }
 
     public void Back()
@@ -499,8 +578,8 @@ public class FinishLevel : NetworkBehaviour
         PlayerPrefs.SetString("HostName", "");
         PlayerPrefs.SetString("ClientID", "");
         PlayerPrefs.SetString("ClientName", "");
+        NetworkManager.Singleton.SceneManager.LoadScene("LoginRegister", LoadSceneMode.Single);
         NetworkManager.Singleton.Shutdown();
-        SceneManager.LoadScene(0);
     }
 
     public void NextLevel()
