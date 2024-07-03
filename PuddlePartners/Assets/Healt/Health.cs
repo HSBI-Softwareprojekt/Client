@@ -54,6 +54,13 @@ public class Health : MonoBehaviour
         }
     }
 
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.E))
+           TakeDamage(1);
+    }
+
     public void AddHealth(float _value)
     {
         // Fügt der aktuellen Gesundheit einen Wert hinzu, bis zum Maximum der Anfangsgesundheit
