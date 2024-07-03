@@ -172,7 +172,7 @@ public class SelectLevel : MonoBehaviour
     public void startLevel()
     {
         PlayerPrefs.SetString("Level", level.ToString());
-        NetworkManager.Singleton.SceneManager.LoadScene("Level_"+level.ToString() + "_test", LoadSceneMode.Single);
+        NetworkManager.Singleton.SceneManager.LoadScene("Level_"+level.ToString() + "", LoadSceneMode.Single);
     }
 
     void OnEnable()
@@ -213,7 +213,7 @@ public class SelectLevel : MonoBehaviour
         catch (Exception)
         {
             ArrayList err = new ArrayList();
-            err.Add("Kein gültiges Rückgabeformat vom Webserver");
+            err.Add("Kein gï¿½ltiges Rï¿½ckgabeformat vom Webserver");
             ErrorMsg(err);
         }
     }
