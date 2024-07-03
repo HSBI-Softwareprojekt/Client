@@ -20,7 +20,7 @@ public class PlayerSpwaner : NetworkBehaviour
 
     private void Sceneloaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
-        if ((IsHost && sceneName == "Level_1_test") || (IsHost && sceneName == "Level_2"))
+        if (NetworkManager.IsHost && sceneName != "LoginRegister")
         {
             foreach(ulong id in clientsCompleted)
             {
