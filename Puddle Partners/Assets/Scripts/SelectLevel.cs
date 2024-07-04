@@ -172,7 +172,7 @@ public class SelectLevel : MonoBehaviour
     public void startLevel()
     {
         PlayerPrefs.SetString("Level", level.ToString());
-        NetworkManager.Singleton.SceneManager.LoadScene("Level_"+level.ToString() + "", LoadSceneMode.Single);
+        NetworkManager.Singleton.SceneManager.LoadScene("Level_"+level.ToString() + "_test", LoadSceneMode.Single);
     }
 
     void OnEnable()

@@ -11,6 +11,8 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.VisualScripting;
+using Unity.Networking.Transport;
+using UnityEditor.Experimental.GraphView;
 
 public class FinishLevel : NetworkBehaviour
 {
@@ -251,7 +253,7 @@ public class FinishLevel : NetworkBehaviour
 
     public void Update()
     {
-        if (!gameover)
+        if (!gameover && !finishedLevel.Value)
         {
             if (water.Value)
             {
@@ -311,7 +313,7 @@ public class FinishLevel : NetworkBehaviour
             GameObject newChance = gameoverPanel.transform.GetChild(0).gameObject.gameObject.transform.GetChild(2).gameObject;
             GameObject returnMain = gameoverPanel.transform.GetChild(0).gameObject.gameObject.transform.GetChild(3).gameObject;
             newChance.SetActive(true);
-            returnMain.SetActive(true);
+            //returnMain.SetActive(true);
             SyncTimeServerRpc();
         }
         TimeSpan time = TimeSpan.FromSeconds(syncTime.Value);
@@ -365,7 +367,7 @@ public class FinishLevel : NetworkBehaviour
                 if (NetworkManager.IsHost)
                 {
                     SetScores();
-                    mainMenue.SetActive(true);
+                    //mainMenue.SetActive(true);
                     if (!lastLevel)
                     {
                         nextLevel.SetActive(true);
@@ -390,7 +392,6 @@ public class FinishLevel : NetworkBehaviour
     {
         elapsedTime = GetCurrentTimeOffset(nowTime);
         TimeSpan time = TimeSpan.FromSeconds(elapsedTime);
-        Debug.Log(time.ToString("hh':'mm':'ss"));
         WebRequest request = WebRequest.Create("http://" + HttpServer() + "/puddle_partners/scoreboard.php");
         ASCIIEncoding encoding = new ASCIIEncoding();
         string postData = "HOST_ID=" + PlayerPrefs.GetString("HostID") + "&CLIENT_ID=" + PlayerPrefs.GetString("ClientID") + "&LEVEL=" + lvl.ToString() + "&TIME=" + time.ToString("hh':'mm':'ss");
@@ -568,8 +569,12 @@ public class FinishLevel : NetworkBehaviour
 
     public void ErrorBack()
     {
+        PlayerPrefs.SetString("HostID", "");
+        PlayerPrefs.SetString("HostName", "");
+        PlayerPrefs.SetString("ClientID", "");
+        PlayerPrefs.SetString("ClientName", "");
         NetworkManager.Singleton.Shutdown();
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("LoginRegister");
     }
 
     public void Back()
@@ -578,8 +583,8 @@ public class FinishLevel : NetworkBehaviour
         PlayerPrefs.SetString("HostName", "");
         PlayerPrefs.SetString("ClientID", "");
         PlayerPrefs.SetString("ClientName", "");
-        NetworkManager.Singleton.SceneManager.LoadScene("LoginRegister", LoadSceneMode.Single);
         NetworkManager.Singleton.Shutdown();
+        SceneManager.LoadScene("LoginRegister");
     }
 
     public void NextLevel()
@@ -593,7 +598,8 @@ public class FinishLevel : NetworkBehaviour
         PlayerPrefs.SetString("HostName", "");
         PlayerPrefs.SetString("ClientID", "");
         PlayerPrefs.SetString("ClientName", "");
-        SceneManager.LoadScene(0);
+        NetworkManager.Singleton.Shutdown();
+        SceneManager.LoadScene("LoginRegister");
     }
 
 }
