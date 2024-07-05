@@ -16,11 +16,11 @@ jobs:
         steps:
             - uses: actions/checkout@v2
               with:
-                  path: .\Puddle Partners\Assets\
+                  path: PuddlePartners
                   fetch-depth: 0
-                  lfs: true
+                  lfs: false
             - name: Get directory
-              run: ls src
+              run: ls
             - uses: actions/cache@v2
               with:
                   path: Library
@@ -31,6 +31,7 @@ jobs:
                   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
               with:
                   targetPlatform: ${{ matrix.targetPlatform }}
+                  projectPath: PuddlePartners
             - uses: actions/upload-artifact@v2
               with:
                   name: Build-${{ matrix.targetPlatform }}
