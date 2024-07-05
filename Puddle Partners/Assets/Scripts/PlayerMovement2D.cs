@@ -18,7 +18,7 @@ public class CharacterController2D : MonoBehaviour
 	[SerializeField] private PhysicsMaterial2D fullFriction;
 
 
-	const float k_GroundedRadius = .2f; // Radius of the overlap circle to determine if grounded
+	const float k_GroundedRadius = .5f; // Radius of the overlap circle to determine if grounded
     const float k_CeilingRadius = .2f; // Radius of the overlap circle to determine if the player can stand up
     private bool m_Grounded;            // Whether or not the player is grounded.
     private bool m_isOnSlope;
