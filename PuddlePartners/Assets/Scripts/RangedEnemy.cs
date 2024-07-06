@@ -18,6 +18,8 @@ public class RangedEnemy : MonoBehaviour
     [Header("Player Layer")]
     [SerializeField] private LayerMask playerLayer; // LayerMask für den Spieler
     private float cooldownTimer = Mathf.Infinity; // Timer zur Überprüfung der Abklingzeit
+    private GameObject player;
+    private Rigidbody2D rb;
 
     // Referenzen
     private Animator anim; // Animator-Komponente
@@ -28,6 +30,9 @@ public class RangedEnemy : MonoBehaviour
         // Initialisiert die Animator- und EnemyPatrol-Komponenten
         anim = GetComponent<Animator>();
         enemyPatrol = GetComponentInParent<EnemyPatrol>();
+        player = GameObject.FindGameObjectWithTag("Player");
+        rb = player.GetComponent<Rigidbody2D>();
+
     }
 
     private void Update()
@@ -78,6 +83,12 @@ public class RangedEnemy : MonoBehaviour
             0, Vector2.left, 0, playerLayer);
 
         return hit.collider != null;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Vector2 forceDirection = transform.localScale.x > 0 ? new Vector2(400f, 100f) : new Vector2(-400f, 100f);
+        rb.AddForce(forceDirection);
     }
 
     private void OnDrawGizmos()

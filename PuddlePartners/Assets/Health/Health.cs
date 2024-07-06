@@ -35,7 +35,6 @@ public class Health : MonoBehaviour
         if (currentHealth > 0)
         {
             // Löst den "hurt"-Trigger im Animator aus und startet die Unverwundbarkeitsroutine
-            anim.SetTrigger("hurt");
             StartCoroutine(Invunerability());
         }
         else
