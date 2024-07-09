@@ -28,6 +28,11 @@ public class PlayerMovement : NetworkBehaviour
 
         animator.SetFloat("Speed", Mathf.Abs(horizontalMove));
 
+        if(transform.localPosition.y < -100f)
+        {
+            transform.localPosition = new Vector2(0f, 0f);
+        }
+
         if(Input.GetButtonDown("Jump"))
         {
             jump = true;
