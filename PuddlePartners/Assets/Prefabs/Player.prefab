@@ -239,7 +239,6 @@ GameObject:
   - component: {fileID: 7273299001123388794}
   - component: {fileID: 1493608817078140181}
   - component: {fileID: 6215674588864058648}
-  - component: {fileID: -2257572234693048797}
   - component: {fileID: 6148324242080365653}
   - component: {fileID: 6832530937775530937}
   m_Layer: 6
@@ -470,7 +469,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1824323056
+  GlobalObjectIdHash: 455144506
   InScenePlacedSourceGlobalObjectIdHash: 1824323056
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -526,23 +525,6 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
---- !u!114 &-2257572234693048797
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7604257101170976678}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 973a28ed52fe07545a36b2ac5ef92ee6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startingHealth: 3
-  iFramesDuration: 0
-  numberOfFlashes: 0
-  components:
-  - {fileID: 4578528764492062918}
 --- !u!114 &6148324242080365653
 MonoBehaviour:
   m_ObjectHideFlags: 0
