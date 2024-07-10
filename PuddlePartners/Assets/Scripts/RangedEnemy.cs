@@ -53,7 +53,7 @@ public class RangedEnemy : MonoBehaviour
         if (PlayerInSight() && cooldownTimer >= attackCooldown)
         {
             cooldownTimer = 0;
-            anim.SetTrigger("rangeAttack");
+            anim.SetTrigger("rangedAttack");
         }
 
         if (enemyPatrol != null)

@@ -1,62 +1,60 @@
 ﻿using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
-public class EnemyProjectile : EnemyDamage
+public class EnemyProjectile : MonoBehaviour
 {
     [SerializeField] private float speed; // Geschwindigkeit des Projektils
     [SerializeField] private float resetTime; // Zeit bis zur Deaktivierung des Projektils
-    private float lifetime; // Lebensdauer des Projektils
-    private Animator anim; // Animator-Komponente des Projektils
-    private BoxCollider2D coll; // BoxCollider2D-Komponente des Projektils
+    [SerializeField] private float pushForce = 10f; // Stärke des Stoßes
 
-    private bool hit; // Gibt an, ob das Projektil etwas getroffen hat
+    private Animator anim; // Animator-Komponente des Projektils
+    private Rigidbody2D rb; // Rigidbody des Projektils für physikalische Interaktion
 
     private void Awake()
     {
-        // Initialisiert die Animator- und BoxCollider2D-Komponenten
         anim = GetComponent<Animator>();
-        coll = GetComponent<BoxCollider2D>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     public void ActivateProjectile()
     {
-        // Aktiviert das Projektil und setzt den Trefferstatus und die Lebensdauer zurück
-        hit = false;
-        lifetime = 0;
         gameObject.SetActive(true);
-        coll.enabled = true;
+        rb.isKinematic = false; // Erlaubt physikalische Einwirkungen auf das Projektil
     }
 
     private void Update()
     {
-        // Bewegt das Projektil, wenn es nichts getroffen hat
-        if (hit) return;
-        float movementSpeed = speed * Time.deltaTime;
-        transform.Translate(movementSpeed, 0, 0);
+        if (!gameObject.activeInHierarchy) return;
 
-        // Erhöht die Lebensdauer des Projektils und deaktiviert es nach Ablauf der Reset-Zeit
-        lifetime += Time.deltaTime;
-        if (lifetime > resetTime)
-            gameObject.SetActive(false);
+        // Bewegt das Projektil
+        transform.Translate(Vector2.right * speed * Time.deltaTime);
+
+        // Deaktiviert das Projektil nach der eingestellten Zeit
+        resetTime -= Time.deltaTime;
+        if (resetTime <= 0)
+            DeactivateProjectile();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Setzt den Trefferstatus und führt die Logik des Elternskripts aus
-        hit = true;
-        base.OnTriggerEnter2D(collision); // Führt zuerst die Logik aus dem Elternskript aus
-        coll.enabled = false;
+        if (collision.gameObject.tag == "Player")
+        {
+            // Stoßt den Spieler weg, anstatt Schaden zuzufügen
+            Rigidbody2D playerRb = collision.GetComponent<Rigidbody2D>();
+            if (playerRb != null)
+            {
+                Vector2 pushDirection = (collision.transform.position - transform.position).normalized;
+                playerRb.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
+            }
 
-        // Löst die Explosionsanimation aus, wenn vorhanden, oder deaktiviert das Projektil
-        if (anim != null)
-            anim.SetTrigger("explode"); // Wenn das Objekt ein Feuerball ist, explodiert es
-        else
-            gameObject.SetActive(false); // Deaktiviert das Projektil, wenn es ein Objekt trifft
+            if (anim != null)
+                anim.SetTrigger("explode");
+
+            DeactivateProjectile(); // Deaktiviert das Projektil nach der Interaktion
+        }
     }
 
-    private void Deactivate()
+    private void DeactivateProjectile()
     {
-        // Deaktiviert das Projektil
         gameObject.SetActive(false);
     }
 }
