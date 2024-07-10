@@ -8977,7 +8977,7 @@ MonoBehaviour:
   - {x: 8.49, y: -5.46, z: 0}
   umbrella: {fileID: 6599690922209243391, guid: 3b335d495ff2bcb4ebe9f99f8e7bcba1, type: 3}
   umbrellaPositions:
-  - {x: -4.8, y: 3.83, z: 0}
+  - {x: -4.8, y: 4.83, z: 0}
 --- !u!114 &1490519585
 MonoBehaviour:
   m_ObjectHideFlags: 0

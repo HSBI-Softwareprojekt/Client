@@ -40,14 +40,14 @@ public class SpawnWorldObjects : NetworkBehaviour
     {
         if (scLoad)
         {
-            for (int i = 0; i < rockObjs.Length; i++)
+            for (int i = 0; i < rockPositions.Length; i++)
             {
                 if (rockObjs[i].transform.localPosition.y < -100.0f)
                 {
                     rockObjs[i].transform.localPosition = rockPositions[i];
                 }
             }
-            for (int i = 0; i < umbrellaObjs.Length; i++)
+            for (int i = 0; i < umbrellaPositions.Length; i++)
             {
                 if (umbrellaObjs[i].transform.localPosition.y < -100.0f)
                 {

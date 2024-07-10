@@ -8,11 +8,7 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Text;
 using UnityEngine.SceneManagement;
-using System.Collections.Generic;
 using Unity.Collections;
-using Unity.VisualScripting;
-using Unity.Networking.Transport;
-using UnityEditor.Experimental.GraphView;
 
 public class FinishLevel : NetworkBehaviour
 {
