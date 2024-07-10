@@ -57,24 +57,33 @@ public class MeleeEnemy : MonoBehaviour
         return hit.collider != null;
     }
 
+
     private void OnDrawGizmos()
     {
-        // Zeichne den Erkennungsbereich
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(boxCollider.bounds.center + transform.right * range * transform.localScale.x * colliderDistance,
-            new Vector3(boxCollider.bounds.size.x * range, boxCollider.bounds.size.y, boxCollider.bounds.size.z));
+        if (boxCollider == null)
+        {
+            return; // Verhindere den Zugriff auf ein null BoxCollider
+        }
 
-        // Visualisiere die Stoßrichtung
-        if (playerRigidbody != null)
+        Gizmos.color = Color.red;
+        Vector3 center = boxCollider.bounds.center + transform.right * range * transform.localScale.x * colliderDistance;
+        Vector3 size = new Vector3(boxCollider.bounds.size.x * range, boxCollider.bounds.size.y, boxCollider.bounds.size.z);
+
+        // Zeichne den Erkennungsbereich
+        Gizmos.DrawWireCube(center, size);
+
+        // Visualisiere die Stoßrichtung, sicherstellen, dass das Spiel läuft und playerRigidbody nicht null ist
+        if (Application.isPlaying && playerRigidbody != null)
         {
             Vector3 pushDirection = transform.right * (transform.localScale.x > 0 ? 1 : -1);
+            pushDirection.y = 0; // Nur horizontale Komponente
+
             Gizmos.color = Color.blue;
-            Vector3 startPosition = boxCollider.bounds.center + transform.right * range * transform.localScale.x * colliderDistance;
-            Vector3 endPosition = startPosition + pushDirection * pushForce; // Benutze pushForce, um die Länge der Linie zu skalieren
-            Gizmos.DrawLine(startPosition, endPosition);
-            Gizmos.DrawSphere(endPosition, 0.1f); // Füge eine kleine Kugel am Ende der Linie hinzu, um das Ende sichtbarer zu machen
+            Gizmos.DrawLine(center, center + pushDirection * pushForce);
+            Gizmos.DrawSphere(center + pushDirection * pushForce, 0.1f); // Zeichnet eine kleine Kugel am Ende der Stoßrichtung
         }
     }
+
 
 
     private void PushPlayer()

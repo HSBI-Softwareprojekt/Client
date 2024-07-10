@@ -69,7 +69,7 @@ public class EnemyPatrol : MonoBehaviour
         anim.SetBool("moving", true);
 
         //Dreht den Feind in die Bewegungsrichtung
-        enemy.localScale = new Vector3(Mathf.Abs(initScale.x) * _direction,
+        enemy.localScale = new Vector3(-Mathf.Abs(initScale.x) * _direction,
             initScale.y, initScale.z);
 
         // Bewegt den Feind in die angegebene Richtung
