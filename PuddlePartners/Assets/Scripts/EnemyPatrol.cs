@@ -27,7 +27,7 @@ public class EnemyPatrol : MonoBehaviour
     }
     private void OnDisable()
     {
-        anim.SetBool("Moving", false);  // Setzt den "Moving"-Parameter im Animator auf false, wenn das Objekt deaktiviert wird
+        anim.SetBool("moving", false);  // Setzt den "Moving"-Parameter im Animator auf false, wenn das Objekt deaktiviert wird
     }
 
     private void Update()
@@ -54,7 +54,7 @@ public class EnemyPatrol : MonoBehaviour
     {
 
         // Setzt den "Moving"-Parameter im Animator auf false und startet den Stillstand-Timer
-        anim.SetBool("Moving", false);
+        anim.SetBool("moving", false);
         idleTimer += Time.deltaTime;
 
 
@@ -66,7 +66,7 @@ public class EnemyPatrol : MonoBehaviour
     private void MoveInDirection(int _direction)
     {
         idleTimer = 0;  // Setzt den Stillstand-Timer zurück und setzt den "Moving"-Parameter im Animator auf true
-        anim.SetBool("Moving", true);
+        anim.SetBool("moving", true);
 
         //Dreht den Feind in die Bewegungsrichtung
         enemy.localScale = new Vector3(Mathf.Abs(initScale.x) * _direction,
