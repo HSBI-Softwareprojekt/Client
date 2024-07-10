@@ -5,31 +5,38 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+// The Scoreboard Menu options, when a Level finishes
 public class ScoreBoardMenu : NetworkBehaviour
 {
+    // The Object, that handles the spawning of Players
     private PlayerSpwaner playerSpawner;
+    // the id of the next Level
     private int nextLevelId;
+
     private void Start()
     {
+        // Set the new Level id to the one, after the current one
         nextLevelId = SceneManager.GetActiveScene().buildIndex + 1;
-        Debug.Log(nextLevelId);
         playerSpawner = FindObjectOfType<PlayerSpwaner>();
 
     }
     //If Host, go back to the lobby. If Client, go back in the main menu.
-
-    //TODO: client case
     public void menuButton()
     {
         if (IsHost)
         {
+            // Shutdown the Connection
             NetworkManager.Singleton.Shutdown();
+            // go back to the main menu
             NetworkManager.Singleton.SceneManager.LoadScene("LoginRegister", LoadSceneMode.Single);
+            // Destroy the PlayerSpawner in order to avoid duplicates
             Destroy(playerSpawner.gameObject);
+            // Destroy the NetworkManager in order to avoid duplicates
             Destroy(NetworkManager.Singleton.gameObject);
         }
     }
-    //TODO: For the user experience, add a case where a client gets feedback, for not being able to use the button
+    
+    // Go to the next Level if a Button is pressed
     public void nextLevelButton()
     {
         if (IsHost)

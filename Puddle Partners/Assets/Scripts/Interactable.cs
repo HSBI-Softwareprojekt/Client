@@ -4,22 +4,22 @@ using System.Diagnostics.Contracts;
 using UnityEngine;
 using UnityEngine.Events;
 
+// Checks if a Player is in Range for certain Interactions
 public class Interactable : MonoBehaviour
 {
+    // Checks if a Player is in Range
     public bool isInRange;
+    // The Key to trigger Interactions
     public KeyCode interactKey;
+    // The Event that triggers through the Interaction
     public UnityEvent interaction; 
-    // Start is called before the first frame update
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
+    // Check if a Player is in Range every frame
     void Update()
     {
         if (isInRange)
         {
+            // Triggers Interaction through input
             if(Input.GetKeyDown(interactKey))
             {
                 interaction.Invoke();
@@ -27,6 +27,7 @@ public class Interactable : MonoBehaviour
         }
     }
 
+    // Checks if the Player steps in Range
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -35,6 +36,8 @@ public class Interactable : MonoBehaviour
             Debug.Log("Player is in Range");
         }
     }
+
+    // Checks if the PLayer steps out of Range
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))

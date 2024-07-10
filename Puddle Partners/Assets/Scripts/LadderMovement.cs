@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// For Player Movements on Ladders
 public class LadderMovement : MonoBehaviour
 {
     private float vertical;
@@ -9,9 +10,10 @@ public class LadderMovement : MonoBehaviour
     private bool isLadder;
     private bool isClimbing;
 
+    // The Players gravity Component
     [SerializeField] private Rigidbody2D rb;
 
-    // Update is called once per frame
+    // Checks if a Player is Climbing or not
     void Update()
     {
         vertical = Input.GetAxis("Vertical");
@@ -29,15 +31,19 @@ public class LadderMovement : MonoBehaviour
     {
         if(isClimbing)
         {
+            // disables Gravity, if the Player is climbing
             rb.gravityScale = 0f;
+            // Updates the Position in the Direction of the Movement
             rb.velocity = new Vector2(rb.velocity.x, vertical * climbSpeed);
         }
         else
         {
+            // Reenables gravity
             rb.gravityScale = 3f;
         }
     }
 
+    // Checks if the Player is on a Ladder
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Ladder"))
@@ -46,6 +52,7 @@ public class LadderMovement : MonoBehaviour
         }
     }
 
+    // Checks if the Player is not on a Ladder anymore
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Ladder"))

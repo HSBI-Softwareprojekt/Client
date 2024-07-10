@@ -20,11 +20,6 @@ public class SpawnWorldObjects : NetworkBehaviour
 
     void Start()
     {
-        /*
-        DontDestroyOnLoad(this.gameObject);
-        rockPositions[0] = new Vector3(0.0f, 0.0f, 0.0f);
-        umbrellaPositions[0] = new Vector3(1.0f, 0.0f, 0.0f);
-        */
         if (NetworkManager.IsHost)
         {
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += Sceneloaded;

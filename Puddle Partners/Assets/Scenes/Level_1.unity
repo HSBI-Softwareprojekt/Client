@@ -1343,6 +1343,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 326490344}
+  - component: {fileID: 326490345}
   - component: {fileID: 326490343}
   - component: {fileID: 326490342}
   m_Layer: 0
@@ -1419,6 +1420,7 @@ MonoBehaviour:
   leverOn: 0
   leverOffSprite: {fileID: 21300000, guid: 441a2d89600064d4d9ced045b19d0ae6, type: 3}
   leverOnSprite: {fileID: 21300000, guid: d3240c946631a4966b1bcab3db999126, type: 3}
+  obj: {fileID: 673234740}
 --- !u!4 &326490344
 Transform:
   m_ObjectHideFlags: 0
@@ -1435,6 +1437,27 @@ Transform:
   - {fileID: 1979031471}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &326490345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 326490339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1799344601
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &327814807
 GameObject:
   m_ObjectHideFlags: 0
@@ -3035,7 +3058,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3049984746074661194, guid: b540762cd5a40c849a6abe83b39e274a, type: 3}
       propertyPath: interaction.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3049984746074661194, guid: b540762cd5a40c849a6abe83b39e274a, type: 3}
       propertyPath: interaction.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -3056,10 +3079,10 @@ PrefabInstance:
     - target: {fileID: 3049984746074661194, guid: b540762cd5a40c849a6abe83b39e274a, type: 3}
       propertyPath: interaction.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
       value: 
-      objectReference: {fileID: 673234740}
+      objectReference: {fileID: 0}
     - target: {fileID: 3049984746074661194, guid: b540762cd5a40c849a6abe83b39e274a, type: 3}
       propertyPath: interaction.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.GameObject, UnityEngine
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 3554824341942900127, guid: b540762cd5a40c849a6abe83b39e274a, type: 3}
       propertyPath: m_Radius

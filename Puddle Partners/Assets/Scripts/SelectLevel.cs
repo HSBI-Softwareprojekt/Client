@@ -24,7 +24,7 @@ public class SelectLevel : MonoBehaviour
     public TMP_Text levelText;
     private int level = 1;
     private Data playerData;
-    private int max_level = 4;
+    private int max_level = 3;
 
     public static class JsonHelper
     {
